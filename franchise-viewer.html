@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TostPoint Franchise Dosyası</title>
+    <title>TostPoint Franchise Katalog</title>
     <link rel="stylesheet" href="franchise-viewer.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
 </head>
 <body>
-    <div id="pdf-viewer-container">
-        <canvas id="pdf-canvas"></canvas>
+    <div class="flipbook-viewport">
+        <div class="container">
+            <div class="flipbook" id="flipbook"></div>
+        </div>
     </div>
-    
+
     <div class="navigation-controls">
         <button id="prev-page">Önceki</button>
-        <span id="page-indicator"><span id="page-num"></span> / <span id="page-count"></span></span>
+        <span id="page-indicator"></span>
         <button id="next-page">Sonraki</button>
     </div>
    

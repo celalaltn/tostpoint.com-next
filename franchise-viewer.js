@@ -1,74 +1,87 @@
-const url = 'franchaise.pdf';
+document.addEventListener('DOMContentLoaded', function () {
+    const url = 'franchaise2.pdf';
+    const flipbookEl = document.getElementById('flipbook');
+    const pageIndicator = document.getElementById('page-indicator');
+    const prevButton = document.getElementById('prev-page');
+    const nextButton = document.getElementById('next-page');
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
 
-let pdfDoc = null,
-    pageNum = 1,
-    pageRendering = false,
-    pageNumPending = null;
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.id = 'loading-indicator';
+    loadingIndicator.textContent = 'Katalog Yükleniyor...';
+    document.body.appendChild(loadingIndicator);
 
-let scale = 1.5;
+    async function renderPdfToFlipbook() {
+        try {
+            const pdf = await pdfjsLib.getDocument(url).promise;
+            const numPages = pdf.numPages;
+            const container = document.querySelector('.container');
+            const isMobile = window.innerWidth < 768;
+            let bookWidth, bookHeight;
 
-const container = document.getElementById('pdf-viewer-container');
-      canvas = document.getElementById('pdf-canvas'),
-      ctx = canvas.getContext('2d'),
-      pageNumSpan = document.getElementById('page-num'),
-      pageCountSpan = document.getElementById('page-count');
+            for (let i = 1; i <= numPages; i++) {
+                const page = await pdf.getPage(i);
+                const viewport = page.getViewport({ scale: 1.5 });
 
-function renderPage(num) {
-    pageRendering = true;
-    pdfDoc.getPage(num).then(function(page) {
-                scale = container.clientWidth / page.getViewport({ scale: 1 }).width;
-        const viewport = page.getViewport({ scale: scale });
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
+                if (i === 1) {
+                    const aspectRatio = viewport.height / viewport.width;
+                    if (isMobile) {
+                        bookWidth = container.clientWidth;
+                    } else {
+                        bookWidth = container.clientWidth / 2;
+                    }
+                    bookHeight = bookWidth * aspectRatio;
+                }
 
-        const renderContext = {
-            canvasContext: ctx,
-            viewport: viewport
-        };
-        const renderTask = page.render(renderContext);
+                const pageElement = document.createElement('div');
+                pageElement.classList.add('page');
 
-        renderTask.promise.then(function() {
-            pageRendering = false;
-            if (pageNumPending !== null) {
-                renderPage(pageNumPending);
-                pageNumPending = null;
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
+                
+                pageElement.appendChild(canvas);
+                flipbookEl.appendChild(pageElement);
             }
-        });
-    });
 
-    pageNumSpan.textContent = num;
-}
+            document.body.removeChild(loadingIndicator);
 
-function queueRenderPage(num) {
-    if (pageRendering) {
-        pageNumPending = num;
-    } else {
-        renderPage(num);
+            const flipbook = new St.PageFlip(flipbookEl, {
+                width: bookWidth,
+                height: bookHeight,
+                showCover: true
+            });
+
+            flipbook.loadFromHTML(document.querySelectorAll('.page'));
+
+            function updatePageIndicator() {
+                const currentPage = flipbook.getCurrentPageIndex();
+                const totalPages = flipbook.getPageCount();
+                const isMobile = window.innerWidth < 768;
+
+                if (isMobile) {
+                    pageIndicator.textContent = `${currentPage + 1} / ${totalPages}`;
+                } else {
+                    const startPage = currentPage * 2 + 1;
+                    const endPage = Math.min(startPage + 1, totalPages);
+                    pageIndicator.textContent = `${startPage} - ${endPage} / ${totalPages}`;
+                }
+            }
+
+            flipbook.on('flip', () => updatePageIndicator());
+            prevButton.addEventListener('click', () => flipbook.flipPrev());
+            nextButton.addEventListener('click', () => flipbook.flipNext());
+
+            updatePageIndicator();
+        } catch (error) {
+            console.error('Error loading or rendering PDF:', error);
+            loadingIndicator.textContent = 'Katalog yüklenemedi.';
+        }
     }
-}
 
-function onPrevPage() {
-    if (pageNum <= 1) {
-        return;
-    }
-    pageNum--;
-    queueRenderPage(pageNum);
-}
-document.getElementById('prev-page').addEventListener('click', onPrevPage);
-
-function onNextPage() {
-    if (pageNum >= pdfDoc.numPages) {
-        return;
-    }
-    pageNum++;
-    queueRenderPage(pageNum);
-}
-document.getElementById('next-page').addEventListener('click', onNextPage);
-
-pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
-    pdfDoc = pdfDoc_;
-    pageCountSpan.textContent = pdfDoc.numPages;
-    renderPage(pageNum);
+    renderPdfToFlipbook();
 });
