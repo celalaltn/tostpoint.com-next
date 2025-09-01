@@ -1,0 +1,144 @@
+@font-face {
+    font-family: 'Capitana';
+    src: url('/fonts/fonnts.com-Capitana_Bold.otf') format('opentype');
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: 'Capitana';
+    src: url('/fonts/fonnts.com-Capitana_Black.otf') format('opentype');
+    font-weight: 900;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #fab914;
+    font-family: 'Capitana', Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+.logo-section {
+    margin-bottom: 30px;
+}
+
+.logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.description {
+    margin-bottom: 40px;
+    color: #000;
+    font-size: 16px;
+    line-height: 1.4;
+    font-weight: bold;
+}
+
+.description p {
+    margin-bottom: 15px;
+}
+
+.navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.nav-button {
+    background-color: #000;
+    color: #fab914;
+    text-decoration: none;
+    padding: 15px 20px;
+    border-radius: 25px;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: 'Capitana', Arial, sans-serif;
+    transition: all 0.3s ease;
+    display: block;
+}
+
+.nav-button:hover {
+    background-color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.nav-button:active {
+    transform: translateY(0);
+}
+
+.branches-section {
+    background-color: #000;
+    color: #fab914;
+    border-radius: 25px;
+    padding: 0 20px;
+    max-height: 0;
+    margin-top: 10px;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+}
+
+.branches-section.active {
+    max-height: 400px; /* Adjust based on content height */
+    padding: 20px;
+}
+
+.branches-section ul {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+}
+
+.branches-section ul li {
+    padding: 5px 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+    .container {
+        max-width: 350px;
+        padding: 0 10px;
+    }
+    
+    .logo {
+        width: 100px;
+    }
+    
+    .description {
+        font-size: 14px;
+    }
+    
+    .nav-button {
+        font-size: 16px;
+        padding: 12px 18px;
+    }
+}
