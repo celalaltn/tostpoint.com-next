@@ -85,7 +85,7 @@ export default function PDFViewer({ pdfUrl }: PDFViewerProps) {
     };
 
     const initializeTurnJS = (pageImages: string[]) => {
-      const $ = (window as typeof window & { $: any }).$;
+      const $ = (window as typeof window & { $: typeof import('jquery').default }).$;
       if ($ && flipBookRef.current) {
         const $flipbook = $(flipBookRef.current);
         
@@ -123,14 +123,14 @@ export default function PDFViewer({ pdfUrl }: PDFViewerProps) {
   }, [pdfUrl, isClient]);
 
   const goToPrevPage = () => {
-    const $ = (window as typeof window & { $: any }).$;
+    const $ = (window as typeof window & { $: typeof import('jquery').default }).$;
     if ($ && flipBookRef.current) {
       $(flipBookRef.current).turn('previous');
     }
   };
 
   const goToNextPage = () => {
-    const $ = (window as typeof window & { $: any }).$;
+    const $ = (window as typeof window & { $: typeof import('jquery').default }).$;
     if ($ && flipBookRef.current) {
       $(flipBookRef.current).turn('next');
     }

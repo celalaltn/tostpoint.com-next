@@ -76,7 +76,7 @@ export default function FranchiseViewer() {
       }
       
       function onNextPage() {
-        if (pageNum >= (pdfDoc as any).numPages) {
+        if (pdfDoc && pageNum >= (pdfDoc as any).numPages) {
           return;
         }
         pageNum++;
@@ -96,7 +96,7 @@ export default function FranchiseViewer() {
       // @ts-expect-error - pdfjsLib is loaded dynamically
       window.pdfjsLib.getDocument(url).promise.then(function(pdfDoc_: unknown) {
         pdfDoc = pdfDoc_;
-        if (pageCountSpan) {
+        if (pageCountSpan && pdfDoc) {
           pageCountSpan.textContent = (pdfDoc as any).numPages.toString();
         }
         renderPage(pageNum);
