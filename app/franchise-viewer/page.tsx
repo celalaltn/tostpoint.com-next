@@ -3,6 +3,22 @@
 import React, { useEffect } from 'react';
 import Head from 'next/head';
 
+// PDF.js type definitions
+interface PDFViewport {
+  width: number;
+  height: number;
+}
+
+interface PDFPage {
+  getViewport(params: { scale: number }): PDFViewport;
+  render(context: { canvasContext: CanvasRenderingContext2D | null; viewport: PDFViewport }): { promise: Promise<void> };
+}
+
+interface PDFDocument {
+  numPages: number;
+  getPage(pageNumber: number): Promise<PDFPage>;
+}
+
 export default function FranchiseViewer() {
   useEffect(() => {
     // PDF.js setup - exactly as in original
@@ -29,7 +45,7 @@ export default function FranchiseViewer() {
       
       function renderPage(num: number) {
         pageRendering = true;
-        (pdfDoc as any).getPage(num).then(function(page: any) {
+        (pdfDoc as PDFDocument).getPage(num).then(function(page: PDFPage) {
           if (container) {
             scale = container.clientWidth / page.getViewport({ scale: 1 }).width;
           }
@@ -76,7 +92,7 @@ export default function FranchiseViewer() {
       }
       
       function onNextPage() {
-        if (pdfDoc && pageNum >= (pdfDoc as any).numPages) {
+        if (pdfDoc && pageNum >= (pdfDoc as PDFDocument).numPages) {
           return;
         }
         pageNum++;
@@ -97,7 +113,7 @@ export default function FranchiseViewer() {
       window.pdfjsLib.getDocument(url).promise.then(function(pdfDoc_: unknown) {
         pdfDoc = pdfDoc_;
         if (pageCountSpan && pdfDoc) {
-          pageCountSpan.textContent = (pdfDoc as any).numPages.toString();
+          pageCountSpan.textContent = (pdfDoc as PDFDocument).numPages.toString();
         }
         renderPage(pageNum);
       });
