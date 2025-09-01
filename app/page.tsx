@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Head from 'next/head';
+import Image from 'next/image';
 
 export default function Home() {
   useEffect(() => {
@@ -98,7 +99,7 @@ export default function Home() {
       
       <div className="container">
         <header className="logo-section">
-          <img src="/tostpoint.png" alt="TostPoint - Türkiye'nin En Lezzetli Tost Franchise'ı Logo" className="logo" width="120" height="120" loading="eager" />
+          <Image src="/tostpoint.png" alt="TostPoint - Türkiye'nin En Lezzetli Tost Franchise'ı Logo" className="logo" width={120} height={120} priority />
         </header>
         
         <main className="description" role="main">

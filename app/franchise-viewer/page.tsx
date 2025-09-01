@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Head from 'next/head';
 
 export default function FranchiseViewer() {
@@ -9,12 +9,12 @@ export default function FranchiseViewer() {
     const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js';
     script.onload = () => {
-      // @ts-ignore
+      // @ts-expect-error - pdfjsLib is loaded dynamically
       window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
       
       const url = '/html/franchaise.pdf';
       
-      let pdfDoc: any = null,
+      let pdfDoc: unknown = null,
           pageNum = 1,
           pageRendering = false,
           pageNumPending: number | null = null;
@@ -29,7 +29,7 @@ export default function FranchiseViewer() {
       
       function renderPage(num: number) {
         pageRendering = true;
-        pdfDoc.getPage(num).then(function(page: any) {
+        (pdfDoc as any).getPage(num).then(function(page: any) {
           if (container) {
             scale = container.clientWidth / page.getViewport({ scale: 1 }).width;
           }
@@ -76,7 +76,7 @@ export default function FranchiseViewer() {
       }
       
       function onNextPage() {
-        if (pageNum >= pdfDoc.numPages) {
+        if (pageNum >= (pdfDoc as any).numPages) {
           return;
         }
         pageNum++;
@@ -93,11 +93,11 @@ export default function FranchiseViewer() {
         nextButton.addEventListener('click', onNextPage);
       }
       
-      // @ts-ignore
-      window.pdfjsLib.getDocument(url).promise.then(function(pdfDoc_: any) {
+      // @ts-expect-error - pdfjsLib is loaded dynamically
+      window.pdfjsLib.getDocument(url).promise.then(function(pdfDoc_: unknown) {
         pdfDoc = pdfDoc_;
         if (pageCountSpan) {
-          pageCountSpan.textContent = pdfDoc.numPages.toString();
+          pageCountSpan.textContent = (pdfDoc as any).numPages.toString();
         }
         renderPage(pageNum);
       });

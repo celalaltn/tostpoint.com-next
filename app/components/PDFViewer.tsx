@@ -31,8 +31,8 @@ export default function PDFViewer({ pdfUrl }: PDFViewerProps) {
     const loadScripts = async () => {
       // Load jQuery
       const $ = (await import('jquery')).default;
-      (window as any).$ = $;
-      (window as any).jQuery = $;
+      (window as typeof window & { $: typeof $; jQuery: typeof $ }).$ = $;
+      (window as typeof window & { $: typeof $; jQuery: typeof $ }).jQuery = $;
       
       // Load Turn.js
       const script = document.createElement('script');
@@ -85,7 +85,7 @@ export default function PDFViewer({ pdfUrl }: PDFViewerProps) {
     };
 
     const initializeTurnJS = (pageImages: string[]) => {
-      const $ = (window as any).$;
+      const $ = (window as typeof window & { $: any }).$;
       if ($ && flipBookRef.current) {
         const $flipbook = $(flipBookRef.current);
         
@@ -111,7 +111,7 @@ export default function PDFViewer({ pdfUrl }: PDFViewerProps) {
           gradients: true,
           elevation: 50,
           when: {
-            turned: function(event: any, page: number) {
+            turned: function(event: Event, page: number) {
               setCurrentPage(page);
             }
           }
@@ -123,14 +123,14 @@ export default function PDFViewer({ pdfUrl }: PDFViewerProps) {
   }, [pdfUrl, isClient]);
 
   const goToPrevPage = () => {
-    const $ = (window as any).$;
+    const $ = (window as typeof window & { $: any }).$;
     if ($ && flipBookRef.current) {
       $(flipBookRef.current).turn('previous');
     }
   };
 
   const goToNextPage = () => {
-    const $ = (window as any).$;
+    const $ = (window as typeof window & { $: any }).$;
     if ($ && flipBookRef.current) {
       $(flipBookRef.current).turn('next');
     }
